@@ -615,7 +615,7 @@ def handle_url():
                 _id = _id.replace("v", "")
                 title = data.get("title", "No Title")
 
-                console.msg("[{num}] ({id}) {title}"\
+                print("[{num}] ({id}) {title}"\
                     .format(num=num + 1, id=_id, title=title)
                 )
             try:
