@@ -110,7 +110,7 @@ itvplayer               itv.com/itvplayer    Yes   Yes   Streams may be geo-rest
 kanal7                  - kanal7.com         Yes   No
                         - tvt.tv.tr
 kingkong                kingkong.com.tw      Yes   --
-linelive                live.line.me         Yes   --
+linelive                live.line.me         Yes   Yes
 live_russia_tv          live.russia.tv       Yes   --
 liveedu                 - liveedu.tv         Yes   --    Some streams require a login.
                         - livecoding.tv
@@ -246,7 +246,8 @@ tvtoya                  tvtoya.pl            Yes   --
 twitcasting             twitcasting.tv       Yes   No
 twitch                  twitch.tv            Yes   Yes   Possible to authenticate for access to
                                                          subscription streams.
-ustreamtv               ustream.tv           Yes   Yes
+ustreamtv               - ustream.tv         Yes   Yes
+                        - video.ibm.com
 ustvnow                 ustvnow.com          Yes   --    All streams require an account, some streams require a subscription.
 vaughnlive              - vaughnlive.tv      Yes   --
                         - breakers.tv
@@ -267,6 +268,7 @@ vimeo                   vimeo.com            Yes   Yes   Password-protected vide
 vinhlongtv              thvli.vn             Yes   No    Streams are geo-restricted to Vietnam
 viutv                   viu.tv               Yes   No    Streams are geo-restricted to Hong Kong
 vk                      vk.com               Yes   Yes
+vlive                   vlive.tv             Yes   No    Embedded Naver VODs are not supported.
 vrtbe                   vrt.be/vrtnu         Yes   Yes
 vtvgo                   vtvgo.vn             Yes   No
 webcast_india_gov       webcast.gov.in       Yes   No    You can use #Channel to indicate CH number.
