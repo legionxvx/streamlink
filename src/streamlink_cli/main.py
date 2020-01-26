@@ -623,7 +623,7 @@ def handle_url():
                 date = datetime.fromisoformat(date)
                 date = date.replace(tzinfo=timezone.utc).astimezone(tz=None)
                 date = date.strftime("%c")
-                print("[{num}] - {date} ({id}) {title}"\
+                print("[{num:2d}] {date} | ({id}) {title}"\
                     .format(num=num + 1, id=_id, title=title, date=date)
                 )
             try:
