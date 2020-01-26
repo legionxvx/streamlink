@@ -4,6 +4,7 @@ import logging
 import os
 import platform
 from collections import OrderedDict
+from datetime import datetime, timezone
 from gettext import gettext
 
 import requests
@@ -614,9 +615,16 @@ def handle_url():
                 _id = data.get("_id", "")
                 _id = _id.replace("v", "")
                 title = data.get("title", "No Title")
+                date = data.get("created_at")
 
-                print("[{num}] ({id}) {title}"\
-                    .format(num=num + 1, id=_id, title=title)
+                if date and date.endswith('Z'):
+                    date = date[:-1] + '+00:00'
+
+                date = datetime.fromisoformat(date)
+                date = date.replace(tzinfo=timezone.utc).astimezone(tz=None)
+                date = date.strftime("%c")
+                print("[{num}] - {date} ({id}) {title}"\
+                    .format(num=num + 1, id=_id, title=title, date=date)
                 )
             try:
                 choice = input("Pick a VOD: ")
