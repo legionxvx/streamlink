@@ -1,9 +1,11 @@
+import logging
 import re
 
 from streamlink.plugin import Plugin
-from streamlink.plugin.api import useragents
-from streamlink.plugin.api import validate
+from streamlink.plugin.api import useragents, validate
 from streamlink.stream import HLSStream
+
+log = logging.getLogger(__name__)
 
 
 class Turkuvaz(Plugin):
@@ -18,6 +20,10 @@ class Turkuvaz(Plugin):
             |
             (atv|a2tv|ahaber|aspor|minikago|minikacocuk|anews)\.com\.tr
         )/webtv/(?:live-broadcast|canli-yayin)
+    |
+        (ahaber)\.com\.tr/video/canli-yayin
+    |
+        atv\.com\.tr/(a2tv)/canli-yayin
     |
         sabah\.com\.tr/(apara)/canli-yayin
     )""")
@@ -37,7 +43,7 @@ class Turkuvaz(Plugin):
 
     def _get_streams(self):
         url_m = self._url_re.match(self.url)
-        domain = url_m.group(1) or url_m.group(2) or url_m.group(3)
+        domain = url_m.group(1) or url_m.group(2) or url_m.group(3) or url_m.group(4) or url_m.group(5)
         # remap the domain to channel
         channel = {"atv": "atvhd",
                    "ahaber": "ahaberhd",
@@ -54,7 +60,7 @@ class Turkuvaz(Plugin):
 
         secure_hls_url = self.session.http.json(res, schema=self._token_schema)
 
-        self.logger.debug("Found HLS URL: {0}".format(secure_hls_url))
+        log.debug("Found HLS URL: {0}".format(secure_hls_url))
         return HLSStream.parse_variant_playlist(self.session, secure_hls_url)
 
 

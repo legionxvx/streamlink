@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 
 class MRTmk(Plugin):
-    url_re = re.compile(r"""https?://play.mrt.com.mk/(live|play)/""")
+    url_re = re.compile(r"""https?://play\.mrt\.com\.mk/(live|play)/""")
     file_re = re.compile(r"""(?P<url>https?://vod-[\d\w]+\.interspace\.com[^"',]+\.m3u8[^"',]*)""")
 
     stream_schema = validate.Schema(
@@ -36,9 +36,8 @@ class MRTmk(Plugin):
 
         for stream_url in stream_urls:
             try:
-                for s in HLSStream.parse_variant_playlist(self.session, stream_url).items():
-                    yield s
-            except IOError as err:
+                yield from HLSStream.parse_variant_playlist(self.session, stream_url).items()
+            except OSError as err:
                 if "403 Client Error" in str(err):
                     log.error("Failed to access stream, may be due to geo-restriction")
                 else:

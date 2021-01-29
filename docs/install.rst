@@ -1,5 +1,3 @@
-.. _install:
-
 .. |br| raw:: html
 
   <br />
@@ -48,9 +46,7 @@ macOS
 ==================================== ===========================================
 Method                               Installing
 ==================================== ===========================================
-Easy install                         .. code-block:: bash
-
-                                        sudo easy_install -U streamlink
+Python pip                           See the `PyPI package and source code`_ section below
 
 `Homebrew`_                          .. code-block:: bash
 
@@ -140,18 +136,18 @@ Distribution                         Installing
 .. _Arch Linux (aur, git): https://aur.archlinux.org/packages/streamlink-git/
 .. _Debian (sid, testing): https://packages.debian.org/unstable/streamlink
 .. _Debian (stable): https://packages.debian.org/unstable/streamlink
-.. _Fedora: https://apps.fedoraproject.org/packages/python-streamlink
+.. _Fedora: https://src.fedoraproject.org/rpms/python-streamlink
 .. _Gentoo Linux: https://packages.gentoo.org/package/net-misc/streamlink
-.. _NetBSD (pkgsrc): http://pkgsrc.se/multimedia/streamlink
+.. _NetBSD (pkgsrc): https://pkgsrc.se/multimedia/streamlink
 .. _NixOS: https://github.com/NixOS/nixpkgs/tree/master/pkgs/applications/video/streamlink
-.. _OpenBSD: http://openports.se/multimedia/streamlink
+.. _OpenBSD: https://openports.se/multimedia/streamlink
 .. _Solus: https://dev.solus-project.com/source/streamlink/
 .. _Ubuntu: http://ppa.launchpad.net/nilarimogard/webupd8/ubuntu/pool/main/s/streamlink/
 .. _Void: https://github.com/void-linux/void-packages/tree/master/srcpkgs/streamlink
 
 .. _Installing AUR packages: https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages
 .. _Installing Debian backported packages: https://wiki.debian.org/Backports#Using_the_command_line
-.. _NixOS channel: https://nixos.org/nixos/packages.html#streamlink
+.. _NixOS channel: https://search.nixos.org/packages?show=streamlink&query=streamlink
 
 
 Package maintainers
@@ -186,10 +182,8 @@ PyPI package and source code
 If a package is not available on your platform, or if it's out of date,
 Streamlink can be installed via `pip`_, the Python package manager.
 
-In addition to using `pip`_, Streamlink can also be installed from source
-via `setuptools`_ after cloning the `git`_ repository.
-
-Using :command:`easy_install` is no longer recommended.
+Before running :command:`pip`, make sure that it's the Python 3 version of `pip`_ (to check, run :command:`pip --version`).
+On some systems, this isn't the case by default and an alternative, like :command:`pip3` for example, needs to be run instead.
 
 .. note::
 
@@ -198,10 +192,10 @@ Using :command:`easy_install` is no longer recommended.
 
     Ensure that you are using an up-to-date version of `pip`_. At least version **6** is required.
 
-.. note::
+.. warning::
 
-    On Linux, when not using a virtual environment, it is recommended to install custom python packages like this
-    only for the current user (see the ``--user`` parameter below), since system-wide packages can cause conflicts with
+    On Linux, when not using a virtual environment, it is recommended to **install custom python packages like this
+    only for the current user** (see the ``--user`` parameter below), since system-wide packages can cause conflicts with
     the system's regular package manager.
 
     Those user-packages will be installed into ``~/.local`` instead of ``/usr`` and entry-scripts for
@@ -216,42 +210,23 @@ Using :command:`easy_install` is no longer recommended.
 ==================================== ===========================================
 Version                              Installing
 ==================================== ===========================================
-`Latest release (pip)`_              .. code-block:: bash
+`Latest release`_                    .. code-block:: bash
 
-                                        # Current user
-                                        pip install --upgrade --user streamlink
+                                        pip install --user --upgrade streamlink
 
-                                        # System wide
-                                        sudo pip install --upgrade streamlink
+`Master branch`_                     .. code-block:: bash
 
-`Development version (pip)`_         .. code-block:: bash
+                                        pip install --user --upgrade git+https://github.com/streamlink/streamlink.git
 
-                                        # Current user
-                                        pip install --upgrade --user git+https://github.com/streamlink/streamlink.git
+`Specific tag/branch or commit`_     .. code-block:: bash
 
-                                        # System wide
-                                        sudo pip install --upgrade git+https://github.com/streamlink/streamlink.git
-
-`Development version (git)`_         .. code-block:: bash
-
-                                        # Current user
-                                        git clone https://github.com/streamlink/streamlink.git
-                                        cd streamlink
-                                        python setup.py install --user
-
-                                        # System wide
-                                        git clone https://github.com/streamlink/streamlink.git
-                                        cd streamlink
-                                        sudo python setup.py install
+                                        pip install --user --upgrade git+https://github.com/USERNAME/streamlink.git@BRANCH-OR-COMMIT
 ==================================== ===========================================
 
-.. _pip: https://pip.readthedocs.org/en/latest/installing.html
-.. _setuptools: https://setuptools.readthedocs.io/en/latest/
-.. _git: https://git-scm.com/
-.. _Latest release (pip): https://pypi.python.org/pypi/streamlink
-.. _Latest release (easy_install): https://pypi.python.org/pypi/streamlink
-.. _Development version (pip): https://github.com/streamlink/streamlink
-.. _Development version (git): https://github.com/streamlink/streamlink
+.. _pip: https://pip.pypa.io/en/stable/
+.. _Latest release: https://pypi.python.org/pypi/streamlink
+.. _Master branch: https://github.com/streamlink/streamlink/commits/master
+.. _Specific tag/branch or commit: https://pip.pypa.io/en/stable/reference/pip_install/#git
 
 Virtual environment
 ^^^^^^^^^^^^^^^^^^^
@@ -296,22 +271,18 @@ To install Streamlink from source you will need these dependencies.
 ==================================== ===========================================
 Name                                 Notes
 ==================================== ===========================================
-`Python`_                            At least version **2.7** or **3.5**.
+`Python`_                            At least version **3.6**.
 `python-setuptools`_
 
 **Automatically installed by the setup script**
 --------------------------------------------------------------------------------
-`python-futures`_                    Only needed on Python **2.7**.
 `python-requests`_                   At least version **2.21.0**.
-`python-singledispatch`_             Only needed on Python **2.7**.
 `pycryptodome`_                      Required to play some encrypted streams
 `iso-639`_                           Used for localization settings, provides language information
 `iso3166`_                           Used for localization settings, provides country information
 `isodate`_                           Used for MPEG-DASH streams
 `PySocks`_                           Used for SOCKS Proxies
 `websocket-client`_                  Used for some plugins
-`shutil_get_terminal_size`_          Only needed on Python **2.7**.
-`shutil_which`_                      Only needed on Python **2.7**.
 
 **Optional**
 --------------------------------------------------------------------------------
@@ -333,10 +304,8 @@ With these two environment variables it is possible to use `pycrypto`_ instead o
 
 .. _Python: https://www.python.org/
 .. _python-setuptools: https://pypi.org/project/setuptools/
-.. _python-futures: https://pypi.org/project/futures/
-.. _python-requests: http://python-requests.org/
-.. _python-singledispatch: https://pypi.org/project/singledispatch/
-.. _RTMPDump: http://rtmpdump.mplayerhq.hu/
+.. _python-requests: https://requests.readthedocs.io/en/master/
+.. _RTMPDump: https://rtmpdump.mplayerhq.hu/
 .. _pycountry: https://pypi.org/project/pycountry/
 .. _pycrypto: https://www.dlitz.net/software/pycrypto/
 .. _pycryptodome: https://pycryptodome.readthedocs.io/en/latest/
@@ -346,8 +315,6 @@ With these two environment variables it is possible to use `pycrypto`_ instead o
 .. _isodate: https://pypi.org/project/isodate/
 .. _PySocks: https://github.com/Anorov/PySocks
 .. _websocket-client: https://pypi.org/project/websocket-client/
-.. _shutil_get_terminal_size: https://pypi.org/project/backports.shutil_get_terminal_size/
-.. _shutil_which: https://pypi.org/project/backports.shutil_which/
 
 
 Windows binaries
@@ -365,6 +332,17 @@ Release                              Notes
                                      the recent scheduled builds. Build artifacts are stored by Github for 90 days. |br|
                                      See the `commit log`_ for a list of changes since the last stable release.
 ==================================== ====================================
+
+.. note::
+
+    **The Streamlink installer for Windows is currently based on Python 3.8.** |br|
+    Versions of Windows prior to 7 are not supported.
+
+    Be aware that the packages for `Chocolatey`_ and the `Windows Package Manager`_ are just wrappers
+    around the stable installer and thus depend on Windows 7+ as well.
+
+    Alternatively, :ref:`Streamlink can be installed via python-pip <install:PyPI package and source code>`
+    in a :ref:`compatible <install:Dependencies>` Python environment.
 
 .. _Stable release:
 .. _GitHub releases page: https://github.com/streamlink/streamlink/releases/latest

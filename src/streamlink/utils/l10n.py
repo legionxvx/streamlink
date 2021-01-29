@@ -1,8 +1,6 @@
 import locale
 import logging
-import re
 
-from streamlink.compat import is_py2
 
 try:
     from iso639 import languages
@@ -21,7 +19,7 @@ DEFAULT_LANGUAGE_CODE = "{0}_{1}".format(DEFAULT_LANGUAGE, DEFAULT_COUNTRY)
 log = logging.getLogger(__name__)
 
 
-class Country(object):
+class Country:
     def __init__(self, alpha2, alpha3, numeric, name, official_name=None):
         self.alpha2 = alpha2
         self.alpha3 = alpha3
@@ -49,20 +47,16 @@ class Country(object):
         )
 
     def __str__(self):
-        if is_py2:
-            return self.__unicode__().encode("utf8")
-        else:
-            return self.__unicode__()
-
-    def __unicode__(self):
-        return u"Country({0!r}, {1!r}, {2!r}, {3!r}, official_name={4!r})".format(self.alpha2,
-                                                                                  self.alpha3,
-                                                                                  self.numeric,
-                                                                                  self.name,
-                                                                                  self.official_name)
+        return "Country({0!r}, {1!r}, {2!r}, {3!r}, official_name={4!r})".format(
+            self.alpha2,
+            self.alpha3,
+            self.numeric,
+            self.name,
+            self.official_name
+        )
 
 
-class Language(object):
+class Language:
     def __init__(self, alpha2, alpha3, name, bibliographic=None):
         self.alpha2 = alpha2
         self.alpha3 = alpha3
@@ -73,9 +67,19 @@ class Language(object):
     def get(cls, language):
         try:
             if PYCOUNTRY:
-                # lookup workaround for alpha_2 language codes
-                lang = languages.get(alpha_2=language) if re.match(r"^[a-z]{2}$", language) else languages.lookup(language)
-                return Language(lang.alpha_2, lang.alpha_3, lang.name, getattr(lang, "bibliographic", None))
+                lang = (languages.get(alpha_2=language)
+                        or languages.get(alpha_3=language)
+                        or languages.get(bibliographic=language)
+                        or languages.get(name=language))
+                if not lang:
+                    raise KeyError(language)
+                return Language(
+                    # some languages don't have an alpha_2 code
+                    getattr(lang, "alpha_2", ""),
+                    lang.alpha_3,
+                    lang.name,
+                    getattr(lang, "bibliographic", "")
+                )
             else:
                 lang = None
                 if len(language) == 2:
@@ -103,19 +107,15 @@ class Language(object):
         )
 
     def __str__(self):
-        if is_py2:
-            return self.__unicode__().encode("utf8")
-        else:
-            return self.__unicode__()
-
-    def __unicode__(self):
-        return u"Language({0!r}, {1!r}, {2!r}, bibliographic={3!r})".format(self.alpha2,
-                                                                            self.alpha3,
-                                                                            self.name,
-                                                                            self.bibliographic)
+        return "Language({0!r}, {1!r}, {2!r}, bibliographic={3!r})".format(
+            self.alpha2,
+            self.alpha3,
+            self.name,
+            self.bibliographic
+        )
 
 
-class Localization(object):
+class Localization:
     def __init__(self, language_code=None):
         self._language_code = None
         self.country = None
@@ -143,7 +143,7 @@ class Localization(object):
                 language_code = None
             if language_code is None or language_code == "C":
                 # cannot be determined
-                language_code = DEFAULT_LANGUAGE
+                language_code = DEFAULT_LANGUAGE_CODE
 
         try:
             self.language, self.country = self._parse_locale_code(language_code)

@@ -1,13 +1,38 @@
-import concurrent.futures.thread
 import logging
+import queue
 from concurrent import futures
-from threading import Thread, Event
+from concurrent.futures.thread import ThreadPoolExecutor
+from sys import version_info
+from threading import Event, Thread
 
-from .stream import StreamIO
-from ..buffers import RingBuffer
-from ..compat import queue
+from streamlink.buffers import RingBuffer
+from streamlink.stream.stream import StreamIO
 
 log = logging.getLogger(__name__)
+
+
+class CompatThreadPoolExecutor(ThreadPoolExecutor):
+    if version_info < (3, 9):
+        def shutdown(self, wait=True, cancel_futures=False):
+            with self._shutdown_lock:
+                self._shutdown = True
+                if cancel_futures:
+                    # Drain all work items from the queue, and then cancel their
+                    # associated futures.
+                    while True:
+                        try:
+                            work_item = self._work_queue.get_nowait()
+                        except queue.Empty:
+                            break
+                        if work_item is not None:
+                            work_item.future.cancel()
+
+                # Send a wake-up to prevent threads calling
+                # _work_queue.get(block=True) from permanently blocking.
+                self._work_queue.put(None)
+            if wait:
+                for t in self._threads:
+                    t.join()
 
 
 class SegmentedStreamWorker(Thread):
@@ -73,7 +98,7 @@ class SegmentedStreamWriter(Thread):
     and finally writing the data to the buffer.
     """
 
-    def __init__(self, reader, size=20, retries=None, threads=None, timeout=None, ignore_names=None):
+    def __init__(self, reader, size=20, retries=None, threads=None, timeout=None):
         self.closed = False
         self.reader = reader
         self.stream = reader.stream
@@ -90,8 +115,7 @@ class SegmentedStreamWriter(Thread):
 
         self.retries = retries
         self.timeout = timeout
-        self.ignore_names = ignore_names
-        self.executor = futures.ThreadPoolExecutor(max_workers=threads)
+        self.executor = CompatThreadPoolExecutor(max_workers=threads)
         self.futures = queue.Queue(size)
 
         Thread.__init__(self, name="Thread-{0}".format(self.__class__.__name__))
@@ -104,9 +128,7 @@ class SegmentedStreamWriter(Thread):
 
         self.closed = True
         self.reader.buffer.close()
-        self.executor.shutdown(wait=False)
-        if concurrent.futures.thread._threads_queues:
-            concurrent.futures.thread._threads_queues.clear()
+        self.executor.shutdown(wait=True, cancel_futures=True)
 
     def put(self, segment):
         """Adds a segment to the download pool and write queue."""

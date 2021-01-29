@@ -3,27 +3,18 @@ import codecs
 from os import environ, path
 from sys import argv, path as sys_path
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 import versioneer
 
+
+data_files = []
 deps = [
-    # Require backport of concurrent.futures on Python 2
-    'futures;python_version<"3.0"',
-    # Require singledispatch on Python <3.4
-    'singledispatch;python_version<"3.4"',
     "requests>=2.21.0,<3.0",
-    'urllib3[secure]>=1.23;python_version<"3.0"',
     "isodate",
     "websocket-client",
     # Support for SOCKS proxies
     "PySocks!=1.5.7,>=1.5.6",
-    # win-inet-pton is missing a dependency in PySocks, this has been fixed but not released yet
-    # Required due to missing socket.inet_ntop & socket.inet_pton method in Windows Python 2.x
-    'win-inet-pton;python_version<"3.0" and platform_system=="Windows"',
-    # shutil.get_terminal_size and which were added in Python 3.3
-    'backports.shutil_which;python_version<"3.3"',
-    'backports.shutil_get_terminal_size;python_version<"3.3"'
 ]
 
 # for encrypted streams
@@ -73,10 +64,23 @@ if is_wheel_for_windows():
     entry_points["gui_scripts"] = ["streamlinkw=streamlink_cli.main:main"]
 
 
+additional_files = [
+    ("share/man/man1", ["docs/_build/man/streamlink.1"])
+]
+
+for destdir, srcfiles in additional_files:
+    files = []
+    for srcfile in srcfiles:
+        if path.exists(srcfile):
+            files.append(srcfile)
+    if files:
+        data_files.append((destdir, files))
+
+
 setup(name="streamlink",
       version=versioneer.get_version(),
       cmdclass=versioneer.get_cmdclass(),
-      description="Streamlink is command-line utility that extracts streams "
+      description="Streamlink is a command-line utility that extracts streams "
                   "from various services and pipes them into a video player of "
                   "choice.",
       long_description=long_description,
@@ -90,14 +94,15 @@ setup(name="streamlink",
       },
       author="Streamlink",
       # temp until we have a mailing list / global email
-      author_email="charlie@charliedrage.com",
+      author_email="streamlink@protonmail.com",
       license="Simplified BSD",
       packages=find_packages("src"),
       package_dir={"": "src"},
       entry_points=entry_points,
+      data_files=data_files,
       install_requires=deps,
       test_suite="tests",
-      python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
+      python_requires=">=3.6, <4",
       classifiers=["Development Status :: 5 - Production/Stable",
                    "License :: OSI Approved :: BSD License",
                    "Environment :: Console",
@@ -105,11 +110,12 @@ setup(name="streamlink",
                    "Operating System :: POSIX",
                    "Operating System :: Microsoft :: Windows",
                    "Operating System :: MacOS",
-                   "Programming Language :: Python :: 2.7",
-                   "Programming Language :: Python :: 3.5",
+                   "Programming Language :: Python :: 3",
+                   "Programming Language :: Python :: 3 :: Only",
                    "Programming Language :: Python :: 3.6",
                    "Programming Language :: Python :: 3.7",
                    "Programming Language :: Python :: 3.8",
+                   "Programming Language :: Python :: 3.9",
                    "Topic :: Internet :: WWW/HTTP",
                    "Topic :: Multimedia :: Sound/Audio",
                    "Topic :: Multimedia :: Video",

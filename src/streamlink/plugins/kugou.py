@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import re
 import time
@@ -11,7 +10,7 @@ log = logging.getLogger(__name__)
 
 
 class Kugou(Plugin):
-    _url_re = re.compile(r"""https?://fanxing.kugou.com/(?P<room_id>\d+)""")
+    _url_re = re.compile(r"""https?://fanxing\.kugou\.com/(?P<room_id>\d+)""")
     _roomid_re = re.compile(r"roomId:\s*'(\d+)'")
     _room_stream_list_schema = validate.Schema(
         {
@@ -80,8 +79,7 @@ class Kugou(Plugin):
                 if not s:
                     yield "live", HLSStream(self.session, hls_url)
                 else:
-                    for _s in s.items():
-                        yield _s
+                    yield from s.items()
 
         if stream_data.get("httpsflv"):
             for http_url in stream_data["httpsflv"]:
